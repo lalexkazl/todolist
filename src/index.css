@@ -23,6 +23,8 @@ body[data-theme='dark'] {
   --colors-bg: hsl(207, 26%, 17%);
   --colors-ui-base: hsl(209, 23%, 22%);
   --colors-ui-header: #000080;
+  --colors-text: hsl(0, 0%, 100%);
+  --colors-accent: #00FFFF;
 
   --shadow: rgba(245, 245, 245, 0.2) 0 0 8px;
 }
@@ -31,6 +33,7 @@ body[data-theme='light'] {
   --colors-bg: hsl(0, 0%, 98%);
   --colors-ui-base: hsl(0, 0%, 100%);
   --colors-ui-header: #00FFFF;
+  --colors-accent: #000080;
   --shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 

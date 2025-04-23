@@ -36,7 +36,6 @@ const FilterButton = styled.button`
 	color: ${(props) =>
 		props.$active ? 'var(--colors-accent)' : 'var(--colors-text)'};
 
-
 	&:hover {
 		border-color: #ddd;
 	}
