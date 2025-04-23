@@ -31,7 +31,6 @@ body[data-theme='light'] {
   --colors-bg: hsl(0, 0%, 98%);
   --colors-ui-base: hsl(0, 0%, 100%);
   --colors-ui-header: #00FFFF;
-
   --shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 
@@ -42,3 +41,5 @@ body {
   font-weight: var(--fw-light);
   background-color: var(--colors-bg);
 }
+
+

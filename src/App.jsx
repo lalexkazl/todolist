@@ -65,6 +65,7 @@ function App() {
 				onAddTask={handleAddTask}
 				allCount={tasks.length}
 				activeCount={tasks.filter((task) => !task.completed).length}
+				complitedCount={tasks.filter((task) => task.completed).length}
 			/>
 			<TaskFilter activeFilter={filter} onFilterChange={setFilter} />
 			<TaskList
