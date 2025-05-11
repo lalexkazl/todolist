@@ -1,8 +1,9 @@
 import styled from 'styled-components';
 import { Container } from './Container';
 import { IoMoon } from 'react-icons/io5';
-import { useEffect, useState } from 'react';
+import { useContext } from 'react';
 import { AddTask } from './AddTask';
+import { ThemeContext } from 'styled-components';
 
 const ItemsCount = styled.span`
 	min-width: 100px;
@@ -88,15 +89,10 @@ export const Header = ({
 	onAddTask,
 	allCount,
 	activeCount,
-	complitedCount,
+	completedCount,
+	overdueCount,
 }) => {
-	const [theme, setTheme] = useState('light');
-
-	const toggleTheme = () => setTheme(theme === 'light' ? 'dark' : 'light');
-
-	useEffect(() => {
-		document.body.setAttribute('data-theme', theme);
-	}, [theme]);
+	const themeContext = useContext(ThemeContext);
 
 	return (
 		<HeaderEl>
@@ -106,12 +102,15 @@ export const Header = ({
 						<ItemsCount>Всего задач: {allCount}</ItemsCount>
 						<ItemsCount>Активных задач: {activeCount}</ItemsCount>
 						<ItemsCount>
-							Завершенных задач: {complitedCount}
+							Завершенных задач: {completedCount}
+						</ItemsCount>
+						<ItemsCount>
+							Просроченных задач: {overdueCount}
 						</ItemsCount>
 					</CountBlock>
 					<InterActiveBlock>
 						<AddTask onAddTask={onAddTask} />
-						<ModeSwitcher onClick={toggleTheme}>
+						<ModeSwitcher onClick={themeContext.toggleTheme}>
 							<IoMoon size="27px" />
 							<span style={{ marginTop: '0.3rem' }}>Theme</span>
 						</ModeSwitcher>

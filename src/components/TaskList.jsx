@@ -20,31 +20,55 @@ const List = styled.ul`
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	width: 100%;
+	margin: 0 auto;
 `;
 
 const TaskItem = styled.li`
+
 	display: flex;
-	align-items: center;
-	padding: 0.8rem 3rem;
-	border: 1px solid #ddd;
-	margin-bottom: 0.5rem;
-	border-radius: 4px;
-	background: ${(props) => (props.$completed ? '#f8f8f8' : '#fff')};
-	gap: 0.8rem;
-	width: 99%;
+	align-items: flex-start;
+	padding: 1rem;
+	border: 1px solid var(--colors-ui-base);
+	margin-bottom: 0.75rem;
+	border-radius: var(--radii);
+	background: ${(props) =>
+		props.$completed ? '#f8f8f8' : '#fff'};
+	gap: 1rem;
+	width: 95%;
 	animation: ${fadeIn} 0.3s ease-out forwards;
 	opacity: 0;
 	transition: all 0.2s ease;
+	position: relative;
+	${(props) =>
+		props.$isOverdue && !props.$completed
+			? 'border-left: 3px solid red; background-color: #fff8f8;'
+			: ''}
+
+	@media (max-width: 768px) {
+		padding: 0.8rem;
+		gap: 0.8rem;
+	}
+
+	@media (max-width: 480px) {
+		flex-direction: column;
+		padding: 0.75rem;
+		gap: 0.5rem;
+	}
 `;
+
 const TaskContent = styled.div`
 	display: grid;
 	grid-template-columns: 2fr 1fr;
 	width: 100%;
 	align-items: center;
 	gap: 1rem;
-	transition: all 0.2s ease;
 
-	@media (max-width: 480px) {
+	@media (max-width: 768px) {
+		gap: 0.8rem;
+	}
+
+	@media (max-width: 600px) {
 		grid-template-columns: 1fr;
 		gap: 0.5rem;
 	}
@@ -60,20 +84,44 @@ const TaskText = styled.span`
 
 	@media (max-width: 480px) {
 		font-size: var(--fs-sm);
-		padding-right: 0;
+	}
+`;
+
+const TaskMeta = styled.div`
+	display: flex;
+	flex-direction: column;
+	gap: 0.3rem;
+	align-items: flex-start;
+
+	@media (max-width: 600px) {
+		flex-direction: row;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	@media (max-width: 480px) {
+		font-size: 0.9rem;
 	}
 `;
 
 const TaskDate = styled.span`
-	font-size: var(--fs-md);
-	color: ${(props) => (props.$completed ? '#aaa' : '#666')};
-	text-align: left;
+	font-size: var(--fs-sm);
+	color: ${(props) => (props.$completed ? '#888' : '#666')};
 	text-decoration: ${(props) => (props.$completed ? 'line-through' : 'none')};
 	transition: all 0.2s ease;
 
 	@media (max-width: 480px) {
-		display: none;
+		font-size: 0.8rem;
 	}
+`;
+
+const DeadlineDate = styled(TaskDate)`
+	color: ${(props) => {
+		if (props.$completed) return '#888';
+		return props.$isOverdue ? 'red' : '#666';
+	}};
+	font-weight: ${(props) => (props.$isOverdue ? 'bold' : 'light')};
+	white-space: nowrap;
 `;
 
 const Checkbox = styled.input`
@@ -91,46 +139,83 @@ const Checkbox = styled.input`
 
 const DeleteButton = styled(IoCloseSharp)`
 	cursor: pointer;
-	color: var(--colors-text);
-	flex-shrink: 0;
-	margin-left: 0.5rem;
-	transition: all 0.2s ease;
+  color: var(--delete-color);
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+  margin-left: auto;
 
-	@media (max-width: 768px) {
-		margin-left: auto;
-		margin-right: 0.5rem;
-	}
+  &:hover {
+    transform: scale(1.1);
+  }
 
-	@media (max-width: 480px) {
-		margin: 0.3rem 0 0 auto;
-	}
+  @media (max-width: 768px) {
+    position: absolute;
+    right: 0.5rem;
+    top: 0.5rem;
+  }
+
+  @media (max-width: 480px) {
+    width: 18px;
+    height: 18px;
+  }
 `;
 
 export const TaskList = ({ tasks, onDeleteTask, onToggleStatus }) => {
+	const formatDate = (dateString) => {
+		if (!dateString) return 'Не указан';
+		const date = new Date(dateString);
+		return date.toLocaleString('ru-RU', {
+			day: '2-digit',
+			month: '2-digit',
+			year: 'numeric',
+			hour: '2-digit',
+			minute: '2-digit',
+		});
+	};
+
 	return (
 		<List>
-			{tasks.map((task) => (
-				<TaskItem key={task.id} $completed={task.completed}>
-					<Checkbox
-						type="checkbox"
-						checked={task.completed}
-						onChange={() => onToggleStatus(task.id)}
-					/>
-					<TaskContent>
-						<TaskText $completed={task.completed}>
-							{task.text}
-						</TaskText>
+			{tasks.map((task) => {
+				const isOverdue =
+					task.deadline &&
+					new Date(task.deadline) < new Date() &&
+					!task.completed;
 
-						<TaskDate $completed={task.completed}>
-							Создано: {task.createdAt}
-						</TaskDate>
-					</TaskContent>
-					<DeleteButton
-						size={20}
-						onClick={() => onDeleteTask(task.id)}
-					/>
-				</TaskItem>
-			))}
+				return (
+					<TaskItem
+						key={task.id}
+						$completed={task.completed}
+						$isOverdue={isOverdue}
+					>
+						<Checkbox
+							type="checkbox"
+							checked={task.completed}
+							onChange={() => onToggleStatus(task.id)}
+						/>
+						<TaskContent>
+							<TaskText $completed={task.completed}>
+								{task.text}
+							</TaskText>
+							<TaskMeta>
+								<TaskDate $completed={task.completed}>
+									Создано: {task.createdAt}
+								</TaskDate>
+								<DeadlineDate
+									$completed={task.completed}
+									$isOverdue={isOverdue}
+								>
+									Дедлайн: {formatDate(task.deadline)}
+									{isOverdue && ' (Просрочено!)'}
+								</DeadlineDate>
+							</TaskMeta>
+						</TaskContent>
+						<DeleteButton
+							size={20}
+							onClick={() => onDeleteTask(task.id)}
+						/>
+					</TaskItem>
+				);
+			})}
 		</List>
 	);
 };

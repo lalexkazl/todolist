@@ -21,16 +21,26 @@ const AddTaskInput = styled.input`
 	height: 38px;
 `;
 
-
+const DeadlineInput = styled.input`
+	padding: 8px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	font-size: var(--fs-sm);
+	font-weight: light;
+	height: 38px;
+	min-width: 160px;
+`;
 
 export const AddTask = ({ onAddTask }) => {
 	const [taskTitle, setTaskTitle] = useState('');
+	const [deadline, setDeadline] = useState('');
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		if (taskTitle.trim()) {
-			onAddTask(taskTitle);
+			onAddTask(taskTitle, deadline);
 			setTaskTitle('');
+			setDeadline('');
 		}
 	};
 
@@ -42,8 +52,16 @@ export const AddTask = ({ onAddTask }) => {
 				onChange={(e) => setTaskTitle(e.target.value)}
 				placeholder="Введите задачу..."
 			/>
-			<IoAddCircle size="27px" onClick={handleSubmit} style={{ margin: 'auto' }} />
-
+			<DeadlineInput
+				type="datetime-local"
+				value={deadline}
+				onChange={(e) => setDeadline(e.target.value)}
+			/>
+			<IoAddCircle
+				size="27px"
+				onClick={handleSubmit}
+				style={{ margin: 'auto' }}
+			/>
 		</AddTaskBlock>
 	);
 };

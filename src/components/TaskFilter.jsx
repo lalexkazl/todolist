@@ -69,6 +69,12 @@ export const TaskFilter = ({ activeFilter, onFilterChange }) => {
 				>
 					Завершённые
 				</FilterButton>
+				<FilterButton
+					$active={activeFilter === 'overdue'}
+					onClick={() => onFilterChange('overdue')}
+				>
+					Просроченные
+				</FilterButton>
 			</FilterButtons>
 		</FilterContainer>
 	);
